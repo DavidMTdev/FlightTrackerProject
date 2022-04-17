@@ -1,6 +1,7 @@
 package com.flighttracker.api.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ public class Flight implements Serializable {
     private String number;
 
     @OneToMany(mappedBy = "flight")
-    private List<FlightHistory> history;
+    private List<FlightHistory> history = new ArrayList<FlightHistory>();
 
     @ManyToOne
     private Aircraft aircraft;
