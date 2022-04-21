@@ -14,13 +14,11 @@ public class AircraftService {
     @Autowired
     AircraftRepository aircraftRepository;
 
-    public void create(Aircraft aircraft) {
+    public Aircraft create(Aircraft aircraft) {
         Aircraft a = aircraftRepository.findByNumber(aircraft.getNumber());
 
-        if (a == null) {
-            aircraftRepository.save(aircraft);
-        }
-
+        if (a == null) return aircraftRepository.save(aircraft);
+        return a;
     }
 
     public List<Aircraft> allAircraft(){

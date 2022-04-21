@@ -5,12 +5,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 import com.flighttracker.api.dto.FlightStatesDTO;
+import com.flighttracker.api.dto.StatesDTO;
 import com.flighttracker.api.entities.Aircraft;
 import com.flighttracker.api.entities.Flight;
 import com.flighttracker.api.entities.FlightHistory;
@@ -28,8 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FlightTask {
 
-    private static final Logger log = LoggerFactory.getLogger(FlightTask.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final Logger logger = LoggerFactory.getLogger(FlightTask.class);
 
     @Autowired
     private AircraftService aircraftService;
@@ -40,9 +38,9 @@ public class FlightTask {
     @Autowired
     private FlightHistoryService flightHistoryService;
     
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "*/15 * * * * *")
     public void launchTask() throws Exception {
-        log.info("Current Time      : {}", dateFormat.format(new Date()));
+        logger.info("Start Launch Task");
 
         String url = "https://opensky-network.org/api/states/all";
         HttpClient client = HttpClient.newHttpClient();
@@ -52,54 +50,36 @@ public class FlightTask {
         .build();
 
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-
         FlightStatesDTO flightStates = new Gson().fromJson(response.body(), FlightStatesDTO.class);
 
-        for (ArrayList state : flightStates.getStates()) {
+        for (ArrayList<?> state : flightStates.getStates()) {
 
-            String icao24 = (String) state.get(0);
-            String callsign = (String) state.get(1);
-
-            Double aaa = (Double) state.get(3);
-
-            Timestamp timePosition = new Timestamp(aaa.longValue());
-
-            aaa = (Double) state.get(5);
-            Float longitude = aaa.floatValue();
-            
-            aaa = (Double) state.get(6);
-            Float latitude = aaa.floatValue();
-
-            aaa = (Double) state.get(7);
-            Float altitude = aaa.floatValue();
-
+            StatesDTO statesDTO = new StatesDTO(state);
 
             Aircraft aircraft = new Aircraft();
-            aircraft.setNumber(callsign);
+            aircraft.setNumber(statesDTO.getCallsign());
 
+            aircraft = aircraftService.create(aircraft);
 
             Flight flight = new Flight();
             flight.setAircraft(aircraft);
-            flight.setNumber(icao24);
+            flight.setNumber(statesDTO.getIcao24());
+
+            flight = flightService.create(flight);
 
             FlightHistory flightHistory = new FlightHistory();
             flightHistory.setFlight(flight);
-            flightHistory.setTime(timePosition);
-            flightHistory.setLongitude(longitude);
-            flightHistory.setLatitude(latitude);
-            flightHistory.setAltitude(altitude);
+            flightHistory.setTime(statesDTO.getTimePosition());
+            flightHistory.setLongitude(statesDTO.getLongitude());
+            flightHistory.setLatitude(statesDTO.getLatitude());
+            flightHistory.setAltitude(statesDTO.getAltitude());
 
             flight.getHistory().add(flightHistory);
-
-            System.out.println(aircraft);
-            System.out.println(flight);
-            System.out.println(flightHistory);
-
-            aircraftService.create(aircraft);
-            flightService.create(flight);
+;
+            
             flightHistoryService.create(flightHistory);
-
         }
 
+        logger.info("End Launch Task");
     }
 }

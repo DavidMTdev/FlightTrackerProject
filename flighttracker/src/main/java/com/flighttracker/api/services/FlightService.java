@@ -12,12 +12,11 @@ public class FlightService {
     @Autowired
     FlightRepository flightRepository;
 
-    public void create(Flight flight) {
+    public Flight create(Flight flight) {
         Flight f = flightRepository.findByNumber(flight.getNumber());
 
-        if (f == null) {
-            flightRepository.save(flight);
-        }
+        if (f == null) return flightRepository.save(flight);
+        return f;
     }
     
 }

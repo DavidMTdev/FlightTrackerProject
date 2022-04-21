@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +28,8 @@ public class Flight implements Serializable {
     @Column(name = "number", unique = true)
     private String number;
 
-    @OneToMany(mappedBy = "flight")
-    private List<FlightHistory> history = new ArrayList<FlightHistory>();
+    @OneToMany(mappedBy = "flight", fetch = FetchType.EAGER)
+    private List<FlightHistory> history = new ArrayList<>();
 
     @ManyToOne
     private Aircraft aircraft;

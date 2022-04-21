@@ -9,6 +9,11 @@ import lombok.Setter;
 @Setter
 public class FlightStatesDTO {
     private Integer time;
-    private ArrayList<ArrayList> states;
+    private ArrayList<ArrayList<?>> states;
+    
+    public FlightStatesDTO(Integer time, ArrayList<ArrayList<?>> states) {
+        this.time = time;
+        this.states = states;
+    }
     
 }
