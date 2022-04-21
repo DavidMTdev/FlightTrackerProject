@@ -1,6 +1,6 @@
 package com.flighttracker.api.services;
 
-import com.flighttracker.api.models.FlightHistory;
+import com.flighttracker.api.entities.FlightHistory;
 import com.flighttracker.api.repositories.FlightHistoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

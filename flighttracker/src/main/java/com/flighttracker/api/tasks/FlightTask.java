@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.flighttracker.api.dto.FlightStatesDTO;
-import com.flighttracker.api.models.Aircraft;
-import com.flighttracker.api.models.Flight;
-import com.flighttracker.api.models.FlightHistory;
+import com.flighttracker.api.entities.Aircraft;
+import com.flighttracker.api.entities.Flight;
+import com.flighttracker.api.entities.FlightHistory;
 import com.flighttracker.api.services.AircraftService;
 import com.flighttracker.api.services.FlightHistoryService;
 import com.flighttracker.api.services.FlightService;

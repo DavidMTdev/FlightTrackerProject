@@ -1,4 +1,4 @@
-package com.flighttracker.api.models;
+package com.flighttracker.api.entities;
 
 import java.io.Serializable;
 import java.util.List;
