@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-public class FlightHistory implements Serializable {
+public class FlightHistoryR implements Serializable {
 
     private Float latitude;
 

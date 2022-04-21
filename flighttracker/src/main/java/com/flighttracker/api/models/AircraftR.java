@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Aircraft implements Serializable {
+public class AircraftR implements Serializable {
 
     private Long id;
 
@@ -17,5 +17,5 @@ public class Aircraft implements Serializable {
 
     private String model;
 
-    private List<Flight> flights;
+    private List<FlightR> flights;
 }
