@@ -12,6 +12,4 @@ public interface AircraftRepository extends JpaRepository<Aircraft, Long> {
     
     Aircraft findByNumber(String number);
 
-    @Override
-    List<Aircraft> findAll();
 }

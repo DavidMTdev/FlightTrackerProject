@@ -6,6 +6,7 @@ import com.flighttracker.api.models.AircraftR;
 import com.flighttracker.api.services.AircraftService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,6 +22,19 @@ public class AircraftController {
 
 
         return AircraftTransformer.transform(aircraftService.allAircraft());
+    }
+
+    @GetMapping("/aircraft/{id}")
+    public List<AircraftR> getAircraftById(@PathVariable("id") int id){
+
+        return AircraftTransformer.transform(aircraftService.aircraftById(id));
+    }
+
+
+    @GetMapping("/aircraft/desc")
+    public List<AircraftR> getAircraftDesc(){
+
+        return AircraftTransformer.transform(aircraftService.aircraftByHistory());
     }
 
 }
