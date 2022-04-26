@@ -8,6 +8,19 @@ import java.util.List;
 
 public class FlightTransformer {
 
+    public static FlightR transform(Flight flight){
+        FlightR flightR = new FlightR();
+
+        flightR.setId(flight.getId());
+        flightR.setNumber(flight.getNumber());
+
+        if (!flight.getHistory().isEmpty()) {
+            flightR.setHistory(FlightHistoryTransformer.transformer(flight.getHistory().get(flight.getHistory().size() - 1)));   
+        }
+
+        return flightR;
+    }
+
     public static List<FlightR> transformFlight(List<Flight> flight){
 
         List<FlightR> flightRS = new ArrayList<>();
@@ -17,11 +30,9 @@ public class FlightTransformer {
 
             flightR.setId(f.getId());
             flightR.setNumber(f.getNumber());
-            flightR.setHistory(FlightHistoryTransformer.transformerFlightHistory(f.getHistory()));
+            flightR.setHistories(FlightHistoryTransformer.transformerFlightHistory(f.getHistory()));
             flightRS.add(flightR);
         }
-
-
 
         return flightRS;
     }

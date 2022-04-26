@@ -18,4 +18,7 @@ public class AircraftR implements Serializable {
     private String model;
 
     private List<FlightR> flights;
+
+    private FlightR flight;
+
 }

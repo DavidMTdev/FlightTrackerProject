@@ -19,16 +19,32 @@ public class AircraftTransformer {
             aircraftR.setId(a.getId());
             aircraftR.setModel(a.getModel());
             aircraftR.setNumber(a.getNumber());
-            aircraftR.setFlights(FlightTransformer.transformFlight(a.getFlights()));
+            // aircraftR.setFlights(FlightTransformer.transformFlight(a.getFlights()));
+            if (!a.getFlights().isEmpty()) {
+                aircraftR.setFlight(FlightTransformer.transform(a.getFlights().get(a.getFlights().size() - 1)));
+            }
+
             aircraftRS.add(aircraftR);
         }
 
-
-
-
-        return aircraftRS;
-
+       return aircraftRS;
     }
 
+    public static List<AircraftR> transformAircrafts(List<Aircraft> aircraft){
 
+        List<AircraftR> aircraftRS = new ArrayList<>();
+
+        for (Aircraft a: aircraft) {
+            AircraftR aircraftR = new AircraftR();
+
+            aircraftR.setId(a.getId());
+            aircraftR.setModel(a.getModel());
+            aircraftR.setNumber(a.getNumber());
+            aircraftR.setFlights(FlightTransformer.transformFlight(a.getFlights()));
+
+            aircraftRS.add(aircraftR);
+        }
+
+       return aircraftRS;
+    }
 }

@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.OrderBy;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,28 +26,17 @@ public class AircraftService {
     }
 
     public List<Aircraft> allAircraft(){
-        List<Aircraft> a = aircraftRepository.findAll();
-
-        return a;
+        return aircraftRepository.findAll();
     }
 
     public List<Aircraft> aircraftById(long id){
         Optional<Aircraft> o = aircraftRepository.findById(id);
 
-
-
-        List<Aircraft> a = o.stream().collect(Collectors.toList());
-
-        return a;
+        return o.stream().collect(Collectors.toList());
     }
 
     public List<Aircraft> aircraftByHistory(){
-
-        List<Aircraft> a = aircraftRepository.findAll(Sort.by(Sort.Order.desc("flights.history.time")));
-
-
-
-        return a;
-
+        
+        return aircraftRepository.findAll(Sort.by(Sort.Order.desc("flights.history.time")));
     }
 }

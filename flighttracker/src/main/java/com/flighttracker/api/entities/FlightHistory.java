@@ -18,10 +18,10 @@ import lombok.Setter;
 @IdClass(FlightHistory.PK.class)
 public class FlightHistory implements Serializable {
 
-    @Column(name = "latitude")
+    @Column(name = "latitude", nullable = false)
     private Float latitude;
 
-    @Column(name = "longitude")
+    @Column(name = "longitude", nullable = false)
     private Float longitude;
 
     @Column(name = "altitude")

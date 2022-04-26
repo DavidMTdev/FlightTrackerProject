@@ -14,7 +14,8 @@ public class FlightR implements Serializable {
     
     private String number;
 
-    private List<FlightHistoryR> history;
+    private List<FlightHistoryR> histories;
 
-    
+    private FlightHistoryR history;
+
 }

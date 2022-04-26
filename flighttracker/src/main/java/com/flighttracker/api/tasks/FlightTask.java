@@ -7,6 +7,8 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.flighttracker.api.dto.FlightStatesDTO;
 import com.flighttracker.api.dto.StatesDTO;
@@ -18,16 +20,15 @@ import com.flighttracker.api.services.FlightHistoryService;
 import com.flighttracker.api.services.FlightService;
 import com.google.gson.Gson;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class FlightTask {
-
-    private static final Logger logger = LoggerFactory.getLogger(FlightTask.class);
 
     @Autowired
     private AircraftService aircraftService;
@@ -38,9 +39,10 @@ public class FlightTask {
     @Autowired
     private FlightHistoryService flightHistoryService;
     
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void launchTask() throws Exception {
-        logger.info("Start Launch Task");
+        log.info("Start Launch Task");
+        long startTime = System.currentTimeMillis();
 
         String url = "https://opensky-network.org/api/states/all";
         HttpClient client = HttpClient.newHttpClient();
@@ -52,34 +54,54 @@ public class FlightTask {
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
         FlightStatesDTO flightStates = new Gson().fromJson(response.body(), FlightStatesDTO.class);
 
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        int count = 0;
+        System.out.println(flightStates.getStates().size());
         for (ArrayList<?> state : flightStates.getStates()) {
+            if (count == 100) break; 
 
-            StatesDTO statesDTO = new StatesDTO(state);
+            Runnable worker = new Runnable() {
+                @Override
+                public void run() {
+                    StatesDTO statesDTO = new StatesDTO(state);
 
-            Aircraft aircraft = new Aircraft();
-            aircraft.setNumber(statesDTO.getCallsign());
+                    Aircraft aircraft = new Aircraft();
+                    aircraft.setNumber(statesDTO.getCallsign());
+        
+                    aircraft = aircraftService.create(aircraft);
+        
+                    Flight flight = new Flight();
+                    flight.setAircraft(aircraft);
+                    flight.setNumber(statesDTO.getIcao24());
+        
+                    flight = flightService.create(flight);
+        
+                    FlightHistory flightHistory = new FlightHistory();
+                    flightHistory.setFlight(flight);
+                    flightHistory.setTime(statesDTO.getTimePosition());
+                    
+                    if (statesDTO.getLatitude() != null && statesDTO.getLongitude() != null) {
+                        flightHistory.setLongitude(statesDTO.getLongitude());
+                        flightHistory.setLatitude(statesDTO.getLatitude());
+                        flightHistory.setAltitude(statesDTO.getAltitude());
 
-            aircraft = aircraftService.create(aircraft);
+                        flight.getHistory().add(flightHistory);
+                        flightHistoryService.create(flightHistory);
+                    }
+                }
+            };
 
-            Flight flight = new Flight();
-            flight.setAircraft(aircraft);
-            flight.setNumber(statesDTO.getIcao24());
-
-            flight = flightService.create(flight);
-
-            FlightHistory flightHistory = new FlightHistory();
-            flightHistory.setFlight(flight);
-            flightHistory.setTime(statesDTO.getTimePosition());
-            flightHistory.setLongitude(statesDTO.getLongitude());
-            flightHistory.setLatitude(statesDTO.getLatitude());
-            flightHistory.setAltitude(statesDTO.getAltitude());
-
-            flight.getHistory().add(flightHistory);
-;
-            
-            flightHistoryService.create(flightHistory);
+            executorService.execute(worker); 
+            count ++;
         }
 
-        logger.info("End Launch Task");
+        executorService.shutdown();  
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        
+        log.info("Time = " + duration);
+        log.info("End Launch Task");
     }
 }
