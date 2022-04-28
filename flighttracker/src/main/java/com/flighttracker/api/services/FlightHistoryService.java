@@ -1,5 +1,8 @@
 package com.flighttracker.api.services;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 import com.flighttracker.api.entities.FlightHistory;
 import com.flighttracker.api.repositories.FlightHistoryRepository;
 
@@ -17,5 +20,9 @@ public class FlightHistoryService {
         if (flightHistory.getFlight() != null) {
             flightHistoryRepository.save(flightHistory);
         }
+    }
+
+    public List<Timestamp> getTimes() {
+        return flightHistoryRepository.findDistinctTimes();
     }
 }

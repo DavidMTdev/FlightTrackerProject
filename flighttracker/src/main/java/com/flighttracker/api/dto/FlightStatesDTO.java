@@ -8,10 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FlightStatesDTO {
-    private Integer time;
+    private Long time;
     private ArrayList<ArrayList<?>> states;
     
-    public FlightStatesDTO(Integer time, ArrayList<ArrayList<?>> states) {
+    public FlightStatesDTO(Long time, ArrayList<ArrayList<?>> states) {
         this.time = time;
         this.states = states;
     }
