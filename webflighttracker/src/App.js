@@ -5,8 +5,7 @@ import Select from 'react-select'
 import axios from 'axios'
 
 import AircraftMarker from './components/AircraftMarker'
-
-const { lookUpRaw } = require('geojson-places')
+import AircraftMenu from './components/AircraftMenu'
 
 function App() {
   const [times, setTimes] = useState([])
@@ -14,40 +13,37 @@ function App() {
 
   useEffect(() => {
     getTimes()
-    getAircrafts()
+    getAircrafts('http://localhost:8080/aircrafts')
     // setTimeout(() => {
     //   getTimes()
     //   getAircrafts()
     // }, 60000)
-  }, [aircrafts])
+  }, [])
 
   const getTimes = () => {
     axios.get('http://localhost:8080/history/times').then(response => {
-      const a = response.data.map(time => ({ value: time, label: time }))
+      const a = response.data.map(time => ({
+        value: Date.parse(time),
+        label: time
+      }))
       setTimes(a)
     })
   }
 
-  const getAircrafts = () => {
-    axios.get('http://localhost:8080/aircrafts').then(response => {
+  const getAircrafts = url => {
+    axios.get(url).then(response => {
       const a = response.data.map(aircraft => {
         if (
           aircraft.flight?.history?.latitude &&
           aircraft.flight?.history?.longitude
         ) {
-          const geoCode = lookUpRaw(
-            aircraft.flight.history.latitude,
-            aircraft.flight.history.longitude
-          ).features[0].properties.admin
-
           return {
             id: aircraft.id,
             number: aircraft.number,
             flight: {
               id: aircraft.flight.id,
               latitude: aircraft.flight.history.latitude,
-              longitude: aircraft.flight.history.longitude,
-              position: geoCode
+              longitude: aircraft.flight.history.longitude
             }
           }
         }
@@ -55,6 +51,11 @@ function App() {
 
       setAircrafts(a.filter(i => i !== undefined))
     })
+  }
+
+  const handleChange = event => {
+    console.log(event.value)
+    getAircrafts(`http://localhost:8080/aircrafts/time/${event.value}`)
   }
 
   return (
@@ -65,8 +66,9 @@ function App() {
           classNamePrefix='select'
           name='time'
           options={times}
+          onChange={e => handleChange(e)}
         />
-        <div></div>
+        {aircrafts ? <AircraftMenu aircrafts={aircrafts} /> : null}
       </div>
       <div className='container-map'>
         <MapContainer center={[51.505, -0.09]} zoom={5} scrollWheelZoom={false}>

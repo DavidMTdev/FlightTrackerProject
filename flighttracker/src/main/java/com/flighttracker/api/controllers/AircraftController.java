@@ -65,9 +65,17 @@ public class AircraftController {
     }
 
     @GetMapping("/aircrafts/time/{timestamp}")
-    public List<AircraftR> getAircraftByTime(@PathVariable("timestamp") long timestamp){
+    public List<AircraftR> getAircraftByTime(HttpServletRequest request, @PathVariable("timestamp") long timestamp){
+        log.info("Request URL :: " + request.getRequestURL().toString());
+        long startTime = System.currentTimeMillis();
         Timestamp t = new Timestamp(timestamp);
-        return AircraftTransformer.transform(aircraftService.aircraftsByTime(t));
+
+        List<AircraftR> aircraftR = AircraftTransformer.transform(aircraftService.aircraftsByTime(t));
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("Time = " + duration);
+        return aircraftR;
     }
 
 }
