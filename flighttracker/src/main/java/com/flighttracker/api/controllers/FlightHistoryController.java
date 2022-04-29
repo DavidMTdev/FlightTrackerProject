@@ -1,21 +1,21 @@
 package com.flighttracker.api.controllers;
 
-
-import com.flighttracker.api.dto.transformer.FlightHistoryTransformer;
-import com.flighttracker.api.entities.FlightHistory;
-import com.flighttracker.api.models.FlightHistoryR;
-import com.flighttracker.api.services.FlightHistoryService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.sql.Timestamp;
 import java.util.List;
 
-@Slf4j
+import javax.servlet.http.HttpServletRequest;
+
+import com.flighttracker.api.entities.FlightHistory;
+import com.flighttracker.api.services.FlightHistoryService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class FlightHistoryController {
@@ -23,14 +23,17 @@ public class FlightHistoryController {
     @Autowired
     private FlightHistoryService flightHistoryService;
 
-    @GetMapping("/history")
-    public List<FlightHistoryR> getAllHistory(){
-        return FlightHistoryTransformer.transformerFlightHistory(flightHistoryService.getAll());
-    }
+    @GetMapping("/history/times")
+    public List<Timestamp> getAllAircraft(HttpServletRequest request) {
+        log.info("Request URL :: " + request.getRequestURL().toString());
+        long startTime = System.currentTimeMillis();
 
-    @GetMapping("/history/{time}")
-    public List<FlightHistoryR> getHistoryById(@PathVariable("time") Timestamp time){
-        return FlightHistoryTransformer.transformerFlightHistory(flightHistoryService.getOne(time));
-    }
+        List<Timestamp> b = flightHistoryService.getTimes();
 
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("Time = " + duration);
+
+        return b;
+    }
 }

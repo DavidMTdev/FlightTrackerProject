@@ -5,7 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,9 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
-@Slf4j
+@Log4j2
 @Component
 public class FlightTask {
 
@@ -56,8 +56,9 @@ public class FlightTask {
 
         ExecutorService executorService = Executors.newCachedThreadPool();
 
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+
         int count = 0;
-        System.out.println(flightStates.getStates().size());
         for (ArrayList<?> state : flightStates.getStates()) {
             if (count == 100) break; 
 
@@ -79,7 +80,8 @@ public class FlightTask {
         
                     FlightHistory flightHistory = new FlightHistory();
                     flightHistory.setFlight(flight);
-                    flightHistory.setTime(statesDTO.getTimePosition());
+                    
+                    flightHistory.setTime(time);
                     
                     if (statesDTO.getLatitude() != null && statesDTO.getLongitude() != null) {
                         flightHistory.setLongitude(statesDTO.getLongitude());
