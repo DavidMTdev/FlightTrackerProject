@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,5 +39,9 @@ public class AircraftService {
     public List<Aircraft> aircraftByHistory(){
         
         return aircraftRepository.findAll(Sort.by(Sort.Order.desc("flights.history.time")));
+    }
+
+    public List<Aircraft> aircraftsByTime(Timestamp timestamp){
+        return aircraftRepository.findByTimes(timestamp);
     }
 }

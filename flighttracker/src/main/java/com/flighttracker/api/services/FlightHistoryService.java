@@ -7,6 +7,7 @@ import com.flighttracker.api.entities.FlightHistory;
 import com.flighttracker.api.repositories.FlightHistoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,10 @@ public class FlightHistoryService {
         if (flightHistory.getFlight() != null) {
             flightHistoryRepository.save(flightHistory);
         }
+    }
+
+    public List<FlightHistory> getAll(){
+        return flightHistoryRepository.findAll();
     }
 
     public List<Timestamp> getTimes() {

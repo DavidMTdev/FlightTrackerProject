@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,12 @@ public class AircraftController {
         log.info("Time = " + duration);
 
         return aircraftR;
+    }
+
+    @GetMapping("/aircrafts/time/{timestamp}")
+    public List<AircraftR> getAircraftByTime(@PathVariable("timestamp") long timestamp){
+        Timestamp t = new Timestamp(timestamp);
+        return AircraftTransformer.transform(aircraftService.aircraftsByTime(t));
     }
 
 }

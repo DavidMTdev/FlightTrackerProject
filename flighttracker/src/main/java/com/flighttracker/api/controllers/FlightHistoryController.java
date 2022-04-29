@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.flighttracker.api.dto.transformer.FlightHistoryTransformer;
 import com.flighttracker.api.entities.FlightHistory;
+import com.flighttracker.api.models.FlightHistoryR;
 import com.flighttracker.api.services.FlightHistoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
@@ -36,4 +39,11 @@ public class FlightHistoryController {
 
         return b;
     }
+
+
+    @GetMapping("/history")
+    public List<FlightHistoryR> getAllHistory(){
+        return FlightHistoryTransformer.transformerFlightHistory(flightHistoryService.getAll());
+    }
+
 }
