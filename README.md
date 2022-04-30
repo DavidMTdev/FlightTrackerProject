@@ -1,6 +1,6 @@
 # FlightTrackerProject
 
-Projet de suivi aéronotique. Ce logiciel a pour objectif de presenter les Avions actuellement en vol dans le monde.
+Projet de suivi aéronotique. Ce logiciel a pour objectif de presenter les avions actuellement en vol dans le monde.
 
 Pour ce faire nous avons reparti le projet en deux :
 
