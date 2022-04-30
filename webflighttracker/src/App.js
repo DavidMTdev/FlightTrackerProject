@@ -54,7 +54,6 @@ function App() {
   }
 
   const handleChange = event => {
-    console.log(event.value)
     getAircrafts(`http://localhost:8080/aircrafts/time/${event.value}`)
   }
 

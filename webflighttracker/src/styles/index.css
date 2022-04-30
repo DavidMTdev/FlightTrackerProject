@@ -31,8 +31,24 @@ code {
 
 .container-menu {
   width: 20vw;
+  height: 100vh;
 }
 
 .container-map {
   width: 80vw;
+}
+
+.basic-single {
+  margin: 20px 10px;
+}
+
+.locations {
+  overflow: scroll;
+  height: calc(100vh - 40px - 38px);
+}
+
+.loc {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 20px;
 }

@@ -2,25 +2,54 @@ import { useState, useEffect } from 'react'
 import { lookUpRaw } from 'geojson-places'
 
 const AircraftMenu = props => {
-  const [locations, setLocations] = useState([])
+  const [locations, setLocations] = useState({})
 
   useEffect(() => {
-    const l = props.aircrafts.map(item =>
+    const geoLocation = props.aircrafts.map(item =>
       getLocation(item.flight.latitude, item.flight.longitude)
     )
 
-    const l2 = l
+    const countLocation = getCountLocation(geoLocation)
 
-    const count = l.filter(i => l2.indexOf(i) !== -1);
-    console.log(count);
-    setLocations(l)
+    setLocations(countLocation)
   }, [props.aircrafts])
 
   const getLocation = (lat, lng) => {
     return lookUpRaw(lat, lng)?.features[0].properties.admin
   }
 
-  return <div>AircraftMenu</div>
+  const getCountLocation = loc => {
+    let countLocation = new Object()
+
+    loc.map(el => (countLocation[el] = 0))
+
+    for (const key in countLocation) {
+      const q = loc.filter(i => key == `${i}`)
+      countLocation[key] = q.length
+    }
+
+    return countLocation
+  }
+
+  const showLocations = object => {
+    let c = []
+    for (const key in object) {
+      c.push(
+        <div className='loc'>
+          <div>{key}</div>
+          <div>{object[key]}</div>
+        </div>
+      )
+    }
+
+    return c
+  }
+
+  return (
+    <div className='locations'>
+      {locations ? showLocations(locations) : null}
+    </div>
+  )
 }
 
 export default AircraftMenu
